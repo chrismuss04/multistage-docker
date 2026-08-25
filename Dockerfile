@@ -1,14 +1,10 @@
 # ── Stage 1: Build ─────────────────────────────────────────────────────────────
-# Use the official Maven + JDK image so we have everything needed to compile.
-# Naming this stage "build" lets the runtime stage reference it with COPY --from=build.
+# Official Maven + JDK image so we have everything needed to compile, naming it build
 FROM maven:3.9-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# Copy pom.xml first, before source. Docker caches each layer separately, so
-# as long as pom.xml hasn't changed, the next RUN (dependency download) is
-# served from cache even if source files changed. This avoids re-downloading
-# Maven dependencies on every code change — the main layer-caching win.
+# Copy pom.xml first, before source to avoid re-downloading Maven depenencies on every code change. 
 COPY pom.xml .
 RUN mvn -B dependency:go-offline
 
